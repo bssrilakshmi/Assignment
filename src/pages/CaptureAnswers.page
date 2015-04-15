@@ -1,3 +1,14 @@
-<apex:page standardController="Opportunity" extensions="CaptureAnswers" action="{!getQuestions}">
-	
+<apex:page standardController="Opportunity" extensions="CaptureAnswers" action="{!getQuestions}" sidebar="false">
+	<apex:form>
+		<apex:pageBlock title="Questions and Answers per Product" id="thePageBlock">
+			<apex:pageBlockTable value="{!lstProductGroups}" var="objProductGroups">
+				<apex:column headervalue="Product" >
+				</apex:column>
+				<apex:column headervalue="Questions">
+				</apex:column>
+				<apex:column headervalue="Answers">
+				</apex:column>
+			</apex:pageBlockTable>
+		</apex:pageBlock>
+	</apex:form>
 </apex:page>

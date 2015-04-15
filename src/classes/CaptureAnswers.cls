@@ -10,10 +10,11 @@ public with sharing class CaptureAnswers {
 	
 	public void getQuestions() {
 		
+		//Get the opportunity id of the record from where the page has been launched.
 		oppId = ApexPages.currentPage().getParameters().get('id');
 		System.debug('---oppId--'+oppId);
 		
-	
+		//Get all products associated with that opportunity.
 		List<OpportunityLineItem> lstOLI = [SELECT Product2Id FROM OpportunityLineItem WHERE OpportunityId= :oppId];
 		Set<Id> setProduct2Ids = new Set<Id>();
 		System.debug('---lstOLI--'+lstOLI);
@@ -25,10 +26,9 @@ public with sharing class CaptureAnswers {
 		
 		System.debug('---setProduct2Ids--'+setProduct2Ids);
 		
-		List<Answer__c> lst1 = [SELECT Question__c, Product__c FROM Answer__c WHERE Product__r.Id IN :setProduct2Ids];
-		List<AggregateResult> lst2 = [SELECT Question__c, Product__c FROM Answer__c WHERE Product__r.Id IN :setProduct2Ids GROUP BY Product__c, Question__c];
+		//Get the Answer for 
+		List<Answer__c> lstAnswers = [SELECT Question__c, Product__c, Opportunity__c FROM Answer__c WHERE Opportunity__c = :oppId];
 		
-		System.debug('---lst1--'+lst1);
-		System.debug('---lst2--'+lst2);
+		System.debug('---lstAnswers--'+lstAnswers);
 	}
 }
