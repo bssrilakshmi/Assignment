@@ -1,8 +1,9 @@
 public with sharing class CaptureAnswers {
 	
 	public List<Product_Group__c> lstProductGroups {get;set;} 
-	public Map<Id, List<Question__c>> mapProductGroups {get;set;} 
+	public Map<Id, Map<String, Question__c>> mapProductGroups {get;set;} 
 	public String oppId;
+	public Map<String, String> mapQuestionsByProduct {get;set;} 
 	
 	public CaptureAnswers(ApexPages.StandardController controller) {
 
@@ -26,9 +27,18 @@ public with sharing class CaptureAnswers {
 		
 		System.debug('---setProduct2Ids--'+setProduct2Ids);
 		
-		//Get the Answer for 
-		List<Answer__c> lstAnswers = [SELECT Question__c, Product__c, Opportunity__c FROM Answer__c WHERE Opportunity__c = :oppId];
+		mapQuestionsByProduct =  new Map<String, String>();
 		
-		System.debug('---lstAnswers--'+lstAnswers);
+		for(Answer__c objAnswer: [SELECT Question__c, Question__r.Question__c, Product__c, Product__r.Name, Opportunity__c FROM Answer__c WHERE Opportunity__c = :oppId]) {
+			
+			if(mapQuestionsByProduct.get(objAnswer.Product__r.Name) == null){
+                
+				mapQuestionsByProduct.put(objAnswer.Product__r.Name , objAnswer.Question__r.Question__c);
+			}
+			
+			mapQuestionsByProduct.put(objAnswer.Product__r.Name , objAnswer.Question__r.Question__c);
+		}
+		
+		System.debug('---mapQuestionsByProduct--'+mapQuestionsByProduct);
 	}
 }

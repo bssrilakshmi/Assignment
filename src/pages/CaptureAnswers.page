@@ -1,10 +1,12 @@
 <apex:page standardController="Opportunity" extensions="CaptureAnswers" action="{!getQuestions}" sidebar="false">
 	<apex:form>
 		<apex:pageBlock title="Questions and Answers per Product" id="thePageBlock">
-			<apex:pageBlockTable value="{!lstProductGroups}" var="objProductGroups">
+			<apex:pageBlockTable value="{!mapQuestionsByProduct}" var="objmapQuestionsByProduct">
 				<apex:column headervalue="Product" >
+					{!objmapQuestionsByProduct}
 				</apex:column>
 				<apex:column headervalue="Questions">
+					{!mapQuestionsByProduct[objmapQuestionsByProduct]}
 				</apex:column>
 				<apex:column headervalue="Answers">
 				</apex:column>
