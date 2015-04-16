@@ -1,11 +1,39 @@
 <apex:page standardController="Opportunity" extensions="CaptureAnswers" showHeader="false" sidebar="false">
 	<apex:form >
+		
 		<apex:pageBlock title="Questions and Answers per Product" id="thePageBlock">
+		
 			<apex:pageBlockTable value="{!lstAnswersWrapper}" var="objlstAnswersWrapper">
+				
 				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.productName}"/>
-				<apex:column headervalue="Questions" value="{!objlstAnswersWrapper.question}"/>
-				<apex:column headervalue="Answers" />
+				
+				<apex:column headervalue="Questions" >
+					<apex:outputText value="{!objlstAnswersWrapper.question}"/>
+					<apex:outputText value="{!objlstAnswersWrapper.questionType}" id="questionType" style="display:none;"/>
+				</apex:column>
+				
+				<apex:column headervalue="Answers">
+				
+					<apex:inputTextarea rendered="{!objlstAnswersWrapper.questionType='Text'}" value="{!objlstAnswersWrapper.answer}"/>
+					
+					<apex:selectList rendered="{!objlstAnswersWrapper.questionType='Picklist'}" value="{!objlstAnswersWrapper.answer}" size="1">
+						<apex:selectOptions value="{!PicklistValues}"/>
+					</apex:selectList>
+					
+					<apex:selectRadio rendered="{!objlstAnswersWrapper.questionType='Radio button'}" value="{!objlstAnswersWrapper.answer}" >
+						<apex:selectOption itemValue="Yes" itemlabel="Yes"/>
+						<apex:selectOption itemValue="No" itemlabel="No"/>
+					</apex:selectRadio>
+					
+				</apex:column>
+				
 			</apex:pageBlockTable>
+			
+			<div style="text-align:center;">
+				<apex:commandButton value="Save" id="saveButton" />
+				<apex:commandButton value="Cancel" id="cancelButton"/>
+			</div>
+			
 		</apex:pageBlock>
 	</apex:form>
 </apex:page>
