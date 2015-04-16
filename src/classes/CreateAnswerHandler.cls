@@ -21,9 +21,12 @@ public with sharing class CreateAnswerHandler {
 		System.debug('---setProduct2Ids--'+setProduct2Ids);
 		
 		//Get the Product group Id for each attached product on opportunity.
-		List<Product2> lstProducts = [SELECT Product_Group__c FROM Product2 WHERE Id IN :setProduct2Ids];
+		List<Product2> lstProducts = 	[	SELECT Product_Group__c 
+											FROM Product2 
+											WHERE Id 
+											IN :setProduct2Ids
+										];
 		
-		//List<Product_Group__c> lstPGs = [SELECT Name (SELECT Id, Name FROM Question__c) ]
 		System.debug('---lstProducts--'+lstProducts);
 		
 		for(Product2 objProduct2: lstProducts) {
@@ -34,7 +37,11 @@ public with sharing class CreateAnswerHandler {
 		System.debug('---setProductGroupIds--'+setProductGroupIds);
 		
 		//Get the Questions under each Product Group above.
-		lstQuestions = [SELECT Id, Name, Product_Group__c FROM Question__c WHERE Product_Group__c IN :setProductGroupIds];
+		lstQuestions = 	[	SELECT Id, Name, Product_Group__c 
+							FROM Question__c 
+							WHERE Product_Group__c 
+							IN :setProductGroupIds
+						];
 		
 		System.debug('---lstQuestions--'+lstQuestions);
 		
