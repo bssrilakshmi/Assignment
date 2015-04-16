@@ -1,26 +1,25 @@
 <apex:page standardController="Opportunity" extensions="CaptureAnswers" showHeader="false" sidebar="false">
 	<apex:form >
-		
 		<apex:pageBlock title="Questions and Answers per Product" id="thePageBlock">
 		
 			<apex:pageBlockTable value="{!lstAnswersWrapper}" var="objlstAnswersWrapper">
 				
-				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.productName}"/>
+				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.Product__r.Name}"/>
 				
 				<apex:column headervalue="Questions" >
-					<apex:outputText value="{!objlstAnswersWrapper.question}"/>
-					<apex:outputText value="{!objlstAnswersWrapper.questionType}" id="questionType" style="display:none;"/>
+					<apex:outputText value="{!objlstAnswersWrapper.Question__r.Question__c}"/>
+					<apex:outputText value="{!objlstAnswersWrapper.Question__r.Type__c}" id="questionType" style="display:none;"/>
 				</apex:column>
 				
 				<apex:column headervalue="Answers">
 				
-					<apex:inputTextarea rendered="{!objlstAnswersWrapper.questionType='Text'}" value="{!objlstAnswersWrapper.answer}"/>
+					<apex:inputTextarea rendered="{!objlstAnswersWrapper.Question__r.Type__c='Text'}" value="{!objlstAnswersWrapper.Answer__c}"/>
 					
-					<apex:selectList rendered="{!objlstAnswersWrapper.questionType='Picklist'}" value="{!objlstAnswersWrapper.answer}" size="1">
+					<apex:selectList rendered="{!objlstAnswersWrapper.Question__r.Type__c='Picklist'}" value="{!objlstAnswersWrapper.Answer__c}" size="1">
 						<apex:selectOptions value="{!PicklistValues}"/>
 					</apex:selectList>
 					
-					<apex:selectRadio rendered="{!objlstAnswersWrapper.questionType='Radio button'}" value="{!objlstAnswersWrapper.answer}" >
+					<apex:selectRadio rendered="{!objlstAnswersWrapper.Question__r.Type__c='Radio button'}" value="{!objlstAnswersWrapper.Answer__c}" >
 						<apex:selectOption itemValue="Yes" itemlabel="Yes"/>
 						<apex:selectOption itemValue="No" itemlabel="No"/>
 					</apex:selectRadio>
@@ -30,8 +29,8 @@
 			</apex:pageBlockTable>
 			
 			<div style="text-align:center;">
-				<apex:commandButton value="Save" id="saveButton" />
-				<apex:commandButton value="Cancel" id="cancelButton"/>
+				<apex:commandButton value="Save" id="saveButton" action="{!btnSave}" />
+				<apex:commandButton value="Cancel" id="cancelButton" action="{!btnCancel}"/>
 			</div>
 			
 		</apex:pageBlock>
