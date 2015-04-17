@@ -1,14 +1,22 @@
 <apex:page standardController="Opportunity" extensions="CaptureAnswers" showHeader="false" sidebar="false">
+	<apex:includeScript value="{!URLFOR($Resource.jQuery, 'jquery-1.11.1.min.js')}"/>
+	<style>
+		#answered, #pending , #question { 
+			
+			font-weight: bold;
+			text-align: center;
+		}
+		
+	</style>
 	<apex:form >
 		<apex:pageBlock title="Questions and Answers per Product" id="thePageBlock">
 		
-			<apex:pageBlockTable value="{!lstAnswersWrapper}" var="objlstAnswersWrapper">
+			<apex:pageBlockTable value="{!lstAnswersWrapper}" var="objlstAnswersWrapper" id="thePageBlockTable">
 				
-				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.Product__r.Name}"/>
-				
+				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.Product__r.Name}" style="font-weight: bold;"/>
+					
 				<apex:column headervalue="Questions" >
-					<apex:outputText value="{!objlstAnswersWrapper.Question__r.Question__c}"/>
-					<apex:outputText value="{!objlstAnswersWrapper.Question__r.Type__c}" id="questionType" style="display:none;"/>
+					<apex:outputText style="font-weight: bold;" value="{!objlstAnswersWrapper.Question__r.Question__c}"/>
 				</apex:column>
 				
 				<apex:column headervalue="Answers">
@@ -28,11 +36,23 @@
 				
 			</apex:pageBlockTable>
 			
+			<div id="answered">Total number of questions answered = {!totalNoOfQuestionsAnswered}</div>
+			<br></br>
+			<div id="pending">Total number of questions pending = {!totalNoOfQuestionsPending}</div>
+			<br></br><br></br>
+			
 			<div style="text-align:center;">
 				<apex:commandButton value="Save" id="saveButton" action="{!btnSave}" />
-				<apex:commandButton value="Cancel" id="cancelButton" action="{!btnCancel}"/>
+				<apex:commandButton value="Cancel" id="cancelButton" onClick="document.location.reload(true)" reRender="thePageBlockTable"/>
 			</div>
 			
 		</apex:pageBlock>
 	</apex:form>
+	
+	<script>
+		
+		/*alert('{!lstProductName}');
+		alert('{!lstNoOfQuestionsAnswered}');*/
+		
+	</script>
 </apex:page>

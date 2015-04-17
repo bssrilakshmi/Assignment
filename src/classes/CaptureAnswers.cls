@@ -3,14 +3,20 @@ public with sharing class CaptureAnswers {
 	public String oppId;
 	public List<Answer__c> lstAnswersWrapper {get; set;}
 	public List<Product_Group__c> lstProductGroups {get;set;} 
+	public List<String> lstProductName {get; set;}
+	public List<Integer> lstNoOfQuestionsAnswered {get; set;}
 	public Map<Id, Map<String, Question__c>> mapProductGroups {get;set;} 
 	public Map<String, String> mapQuestionsByProduct {get;set;} 
 	public Set<Id> setProduct2Ids = new Set<Id>();
-	public Integer numberOfAnswerRecords {get; set;}
+	public Integer numberOfAnswerRecords;
+	public List<AggregateResult> lstCount {get; set;}
+	public Integer totalNoOfQuestionsAnswered {get; set;}
+	public Integer totalNoOfQuestionsPending {get; set;}
 	
 	public CaptureAnswers(ApexPages.StandardController controller) {
 		
 		getQuestions();
+		getNoOfQuestions();
 	}
 	
 	public void getQuestions() {
@@ -29,28 +35,62 @@ public with sharing class CaptureAnswers {
 		    setProduct2Ids.add(obj.Product2Id);
 		}
 		
-		mapQuestionsByProduct =  new Map<String, String>();
-		
 		lstAnswersWrapper = [	SELECT Question__c, Question__r.Question__c, Question__r.Type__c, Question__r.Picklist_Value__c, Product__c, Product__r.Name, Opportunity__c, Answer__c
 								FROM Answer__c 
 								WHERE Opportunity__c = :oppId 
 								ORDER BY Product__r.Name, Question__r.Question__c
 							];
+		
+		/*lstProductName = new List<String>();
+		lstNoOfQuestionsAnswered = new List<Integer>();
+		
+		/*for(Answer__c objAns : lstAnswersWrapper) {
+			
+			System.debug('----objAns.Product__r.Name------'+objAns.Product__r.Name);
+			System.debug('----objAns.Answer__c------'+objAns.Answer__c);
+			lstProductName.add(objAns.Product__r.Name);
+			System.debug('----lstProductName------'+lstProductName);
+			lstAnswerValues.add(objAns.Answer__c);
+			System.debug('----lstAnswerValues------'+lstAnswerValues);
+		}*/
+		
+		/*System.debug('----lstProductName------'+lstProductName);
+		lstCount = new List<AggregateResult>();
+		lstCount = [SELECT Product__r.Name, Count(Id) FROM Answer__c WHERE Opportunity__c = :oppId AND Answer__c !='' GROUP BY Product__r.Name];
+		System.debug('----lstCount------'+lstCount);
+		
+		for(AggregateResult objAggRes: lstCount) {
+			
+			lstProductName.add((String)objAggRes.get('Name'));
+			lstNoOfQuestionsAnswered.add((Integer)objAggRes.get('expr0'));
+		}
+		
+		totalNoOfQuestionsAnswered = 0;
+		
+		for(Integer i=0; i<lstNoOfQuestionsAnswered.size(); i++) {
+			
+			totalNoOfQuestionsAnswered = totalNoOfQuestionsAnswered + lstNoOfQuestionsAnswered.get(i);
+		}
+		
+		System.debug('----totalNoOfQuestionsAnswered------'+totalNoOfQuestionsAnswered);
+		
+		totalNoOfQuestionsPending = lstAnswersWrapper.size() - totalNoOfQuestionsAnswered;
+		System.debug('----totalNoOfQuestionsPending------'+totalNoOfQuestionsPending);*/
 	}
 	
 	public List<SelectOption> getPicklistValues() {
 		
-		List<SelectOption> options = new List<SelectOption>();
+		List<SelectOption> lstSelectOption = new List<SelectOption>();
         
 		Schema.DescribeFieldResult fieldResult = Question__c.Picklist_Value__c.getDescribe();
 		List<Schema.PicklistEntry> lstPicklist = fieldResult.getPicklistValues();
         
 		for( Schema.PicklistEntry objPicklist : lstPicklist) {
 			
-			options.add(new SelectOption(objPicklist.getLabel(), objPicklist.getValue()));
+			lstSelectOption.add(new SelectOption(objPicklist.getLabel(), objPicklist.getValue()));
 		}       
 		
-		return options;
+		return lstSelectOption;
 	}
 	
 	public void btnSave() {
@@ -58,9 +98,46 @@ public with sharing class CaptureAnswers {
 		System.debug('----lstAnswersWrapper------'+lstAnswersWrapper);
 		
 		Database.update(lstAnswersWrapper);
+		getNoOfQuestions();
 	}
 	
-	public void btnCancel() {
+	public void getNoOfQuestions() {
+		
+		lstProductName = new List<String>();
+		lstNoOfQuestionsAnswered = new List<Integer>();
+		
+		/*for(Answer__c objAns : lstAnswersWrapper) {
+			
+			System.debug('----objAns.Product__r.Name------'+objAns.Product__r.Name);
+			System.debug('----objAns.Answer__c------'+objAns.Answer__c);
+			lstProductName.add(objAns.Product__r.Name);
+			System.debug('----lstProductName------'+lstProductName);
+			lstAnswerValues.add(objAns.Answer__c);
+			System.debug('----lstAnswerValues------'+lstAnswerValues);
+		}*/
+		
+		System.debug('----lstProductName------'+lstProductName);
+		lstCount = new List<AggregateResult>();
+		lstCount = [SELECT Product__r.Name, Count(Id) FROM Answer__c WHERE Opportunity__c = :oppId AND Answer__c !='' GROUP BY Product__r.Name];
+		System.debug('----lstCount------'+lstCount);
+		
+		for(AggregateResult objAggRes: lstCount) {
+			
+			lstProductName.add((String)objAggRes.get('Name'));
+			lstNoOfQuestionsAnswered.add((Integer)objAggRes.get('expr0'));
+		}
+		
+		totalNoOfQuestionsAnswered = 0;
+		
+		for(Integer i=0; i<lstNoOfQuestionsAnswered.size(); i++) {
+			
+			totalNoOfQuestionsAnswered = totalNoOfQuestionsAnswered + lstNoOfQuestionsAnswered.get(i);
+		}
+		
+		System.debug('----totalNoOfQuestionsAnswered------'+totalNoOfQuestionsAnswered);
+		
+		totalNoOfQuestionsPending = lstAnswersWrapper.size() - totalNoOfQuestionsAnswered;
+		System.debug('----totalNoOfQuestionsPending------'+totalNoOfQuestionsPending);
 		
 	}
 }
