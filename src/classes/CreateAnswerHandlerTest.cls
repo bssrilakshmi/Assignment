@@ -30,6 +30,7 @@ private class CreateAnswerHandlerTest {
     	List<OpportunityLineItem> lstOpportunityLineItems = new List<OpportunityLineItem>();
     	List<PricebookEntry> lstPricebookEntry = new List<PricebookEntry>();
     	List<Question__c> lstQuestions = new List<Question__c>();
+    	List<Answer__c> lstAnswers = new List<Answer__c>();
     	
     	//Create a dummy account
     	Account acc = new Account(Name='Test Account');
@@ -88,19 +89,49 @@ private class CreateAnswerHandlerTest {
         
         insert lstOpportunityLineItems;
         
-        List<Answer__c> lstAnswers1 = [SELECT Opportunity__c, Product__c, Question__c FROM Answer__c WHERE Opportunity__c = :lstOpportunities[0].id];
-        List<Answer__c> lstAnswers2 = [SELECT Opportunity__c, Product__c, Question__c FROM Answer__c WHERE Opportunity__c = :lstOpportunities[1].id];
+        List<Answer__c> lstAnswers1 = [SELECT Opportunity__c, Product__c, Question__c, Question__r.Type__c, Answer__c FROM Answer__c WHERE Opportunity__c = :lstOpportunities[0].id];
+        List<Answer__c> lstAnswers2 = [SELECT Opportunity__c, Product__c, Question__c, Question__r.Type__c, Answer__c FROM Answer__c WHERE Opportunity__c = :lstOpportunities[1].id];
         
         System.assertEquals(6, lstAnswers1.size());
         System.assertEquals(2, lstAnswers2.size());
         
         ApexPages.StandardController controller;
-        
+       	
+       	/*Opportunity objOpportunity =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
+											FROM Opportunity 
+											WHERE Id = :lstOpportunities[0].id
+										];*/
+										
+       	//List<Opportunity> lstOpportunities1 = ;
         CaptureAnswers objCaptureAnswers = new CaptureAnswers(controller);
         
         List<SelectOption> lstSelectOption = objCaptureAnswers.getPicklistValues();
         
+        for(Answer__c objAns: lstAnswers1) {
+        	
+        	if(objAns.Question__r.Type__c == 'Text') {
+        		
+        		objAns.Answer__c = 'Text type';
+        	
+        	} else if(objAns.Question__r.Type__c == 'Picklist') {
+        		
+        		objAns.Answer__c = lstSelectOption[0].getValue();
+        	
+        	} else if(objAns.Question__r.Type__c == 'Radio button') {
+        		
+        		objAns.Answer__c = 'Yes';
+        	}
+        	
+        	lstAnswers.add(objAns);
+        }
+        
+        Database.update(lstAnswers);
+        
         objCaptureAnswers.btnSave();
+        
+        List<Answer__c> lstAnswers3 = [SELECT Opportunity__c, Product__c, Question__c, Question__r.Type__c, Answer__c FROM Answer__c WHERE Opportunity__c = :lstOpportunities[0].id];
+        
+        System.assertEquals('Text type', lstAnswers3[0].Answer__c);
         
         Test.stopTest();
     }

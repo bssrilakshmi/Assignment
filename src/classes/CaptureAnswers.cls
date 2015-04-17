@@ -82,12 +82,18 @@ public with sharing class CaptureAnswers {
 	//Get the no. of questions answered and unanswered for the opportunity.
 	public void getNoOfQuestions() {
 		
-		Opportunity objOpportunity =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
-											FROM Opportunity 
-											WHERE Id = :oppId
-										];
+		//Opportunity objOpportunity = new Opportunity();
+		 //= 
+		List<Opportunity> lstOpportunity1 =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
+												FROM Opportunity 
+												WHERE Id = :oppId
+											];
 		
-		totalNoOfQuestionsAnswered = (Integer)objOpportunity.Total_number_of_questions_answered__c;
-		totalNoOfQuestionsPending = (Integer)objOpportunity.Total_number_of_questions_pending__c;
+		if(!lstOpportunity1.isEmpty()) {
+			
+			totalNoOfQuestionsAnswered = (Integer)lstOpportunity1[0].Total_number_of_questions_answered__c;
+			totalNoOfQuestionsPending = (Integer)lstOpportunity1[0].Total_number_of_questions_pending__c;
+		}
+		
 	}
 }
