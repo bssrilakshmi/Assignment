@@ -1,7 +1,7 @@
 public with sharing class CaptureAnswers {
 	
 	public String oppId;
-	public List<Answer__c> lstAnswersWrapper {get; set;}
+	public List<Product2> lstProduct2AndAnswers {get; set;}
 	public List<Product_Group__c> lstProductGroups {get;set;} 
 	public List<String> lstProductName {get; set;}
 	public List<Integer> lstNoOfQuestionsAnswered {get; set;}
@@ -12,6 +12,7 @@ public with sharing class CaptureAnswers {
 	public List<AggregateResult> lstCount {get; set;}
 	public Integer totalNoOfQuestionsAnswered {get; set;}
 	public Integer totalNoOfQuestionsPending {get; set;}
+	public List<Answer__c> lstAnswer = new List<Answer__c>();
 	
 	public CaptureAnswers(ApexPages.StandardController controller) {
 		
@@ -35,13 +36,18 @@ public with sharing class CaptureAnswers {
 		    setProduct2Ids.add(obj.Product2Id);
 		}
 		
-		lstAnswersWrapper = [	SELECT Question__c, Question__r.Question__c, Question__r.Type__c, Question__r.Picklist_Value__c, Product__c, Product__r.Name, Opportunity__c, Answer__c
-								FROM Answer__c 
-								WHERE Opportunity__c = :oppId 
-								ORDER BY Product__r.Name, Question__r.Question__c
+		lstProduct2AndAnswers = [	SELECT Name, 
+									(	SELECT Question__c, Question__r.Question__c, Question__r.Type__c, Question__r.Picklist_Value__c, Product__c, Product__r.Name, Opportunity__c, Answer__c 
+										FROM Answers__r 
+										WHERE Opportunity__c = :oppId ORDER BY Question__r.Question__c
+									) 
+									FROM Product2 
+									WHERE Id 
+									IN:setProduct2Ids
 							];
 	}
 	
+	//Get the picklist field on Question object.
 	public List<SelectOption> getPicklistValues() {
 		
 		List<SelectOption> lstSelectOption = new List<SelectOption>();
@@ -57,47 +63,31 @@ public with sharing class CaptureAnswers {
 		return lstSelectOption;
 	}
 	
+	//Save the answer records on click of save button.
 	public void btnSave() {
 		
-		System.debug('----lstAnswersWrapper------'+lstAnswersWrapper);
+		for (Product2 objProduct : lstProduct2AndAnswers) {
+			
+			for(Answer__c objAnswer : objProduct.Answers__r) {
+				
+				lstAnswer.add(objAnswer);
+			}
+		}
 		
-		Database.update(lstAnswersWrapper);
+		Database.update(lstAnswer);
+		
 		getNoOfQuestions();
 	}
 	
+	//Get the no. of questions answered and unanswered for the opportunity.
 	public void getNoOfQuestions() {
 		
-		lstProductName = new List<String>();
-		lstNoOfQuestionsAnswered = new List<Integer>();
+		Opportunity objOpportunity =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
+											FROM Opportunity 
+											WHERE Id = :oppId
+										];
 		
-		System.debug('----lstProductName------'+lstProductName);
-		
-		lstCount = new List<AggregateResult>();
-		
-		lstCount =	[	SELECT Product__r.Name, Count(Id) 
-						FROM Answer__c 
-						WHERE Opportunity__c = :oppId AND Answer__c !='' 
-						GROUP BY Product__r.Name
-					];
-					
-		System.debug('----lstCount------'+lstCount);
-		
-		for(AggregateResult objAggRes: lstCount) {
-			
-			lstProductName.add((String)objAggRes.get('Name'));
-			lstNoOfQuestionsAnswered.add((Integer)objAggRes.get('expr0'));
-		}
-		
-		totalNoOfQuestionsAnswered = 0;
-		
-		for(Integer i=0; i<lstNoOfQuestionsAnswered.size(); i++) {
-			
-			totalNoOfQuestionsAnswered = totalNoOfQuestionsAnswered + lstNoOfQuestionsAnswered.get(i);
-		}
-		
-		System.debug('----totalNoOfQuestionsAnswered------'+totalNoOfQuestionsAnswered);
-		
-		totalNoOfQuestionsPending = lstAnswersWrapper.size() - totalNoOfQuestionsAnswered;
-		System.debug('----totalNoOfQuestionsPending------'+totalNoOfQuestionsPending);
+		totalNoOfQuestionsAnswered = (Integer)objOpportunity.Total_number_of_questions_answered__c;
+		totalNoOfQuestionsPending = (Integer)objOpportunity.Total_number_of_questions_pending__c;
 	}
 }

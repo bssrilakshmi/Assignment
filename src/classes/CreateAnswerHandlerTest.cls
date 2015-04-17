@@ -42,10 +42,12 @@ private class CreateAnswerHandlerTest {
         insert lstProductGroups;
         
         //Get the Standard PriceBook and make sure it is active
-        Pricebook2 pBook = [SELECT Id, Name FROM Pricebook2 WHERE IsStandard = true];
-		System.debug('--pBook--'+pBook);
+        Pricebook2 pBook = 	[	SELECT Id, Name 
+        						FROM Pricebook2 
+        						WHERE IsStandard = true
+        					];
+
         pBook.IsActive = true;
-        
         update pBook;
         
         //Create three products
@@ -63,10 +65,10 @@ private class CreateAnswerHandlerTest {
         insert lstPricebookEntry;
         
         //Create questions.
-        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[0].Id));
-        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[0].Id));
-        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[1].Id));
-        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[1].Id));
+        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[0].Id, Type__c = 'Text', Question__c = 'Question 1 of type text?'));
+        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[0].Id, Type__c = 'Picklist', Question__c = 'Question 1 of type picklist?'));
+        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[1].Id, Type__c = 'Text', Question__c = 'Question 1 of type text?'));
+        lstQuestions.add(new Question__c(Product_Group__c = lstProductGroups[1].Id, Type__c = 'Radio button', Question__c = 'Question 1 of type radio button?'));
         
         insert lstQuestions;
         
@@ -91,5 +93,15 @@ private class CreateAnswerHandlerTest {
         
         System.assertEquals(6, lstAnswers1.size());
         System.assertEquals(2, lstAnswers2.size());
+        
+        ApexPages.StandardController controller;
+        
+        CaptureAnswers objCaptureAnswers = new CaptureAnswers(controller);
+        
+        List<SelectOption> lstSelectOption = objCaptureAnswers.getPicklistValues();
+        
+        objCaptureAnswers.btnSave();
+        
+        Test.stopTest();
     }
 }

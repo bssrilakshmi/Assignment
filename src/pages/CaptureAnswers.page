@@ -11,29 +11,31 @@
 	<apex:form >
 		<apex:pageBlock title="Questions and Answers per Product" id="thePageBlock">
 		
-			<apex:pageBlockTable value="{!lstAnswersWrapper}" var="objlstAnswersWrapper" id="thePageBlockTable">
+			<apex:pageBlockTable value="{!lstProduct2AndAnswers}" var="objlstAnswersWrapper" id="thePageBlockTable">
 				
-				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.Product__r.Name}" style="font-weight: bold;"/>
-					
-				<apex:column headervalue="Questions" >
-					<apex:outputText style="font-weight: bold;" value="{!objlstAnswersWrapper.Question__r.Question__c}"/>
+				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.Name}" style="font-weight: bold;"/>
+				<apex:column>
+					<apex:pageBlockTable value="{!objlstAnswersWrapper.Answers__r}" var="objlstAnswers" >
+						<apex:column headervalue="Questions" >
+							<apex:outputText style="font-weight: bold;" value="{!objlstAnswers.Question__r.Question__c}"/>
+						</apex:column>
+						
+						<apex:column headervalue="Answers">
+						
+							<apex:inputTextarea rendered="{!objlstAnswers.Question__r.Type__c='Text'}" value="{!objlstAnswers.Answer__c}"/>
+							
+							<apex:selectList rendered="{!objlstAnswers.Question__r.Type__c='Picklist'}" value="{!objlstAnswers.Answer__c}" size="1">
+								<apex:selectOptions value="{!PicklistValues}"/>
+							</apex:selectList>
+							
+							<apex:selectRadio rendered="{!objlstAnswers.Question__r.Type__c='Radio button'}" value="{!objlstAnswers.Answer__c}" >
+								<apex:selectOption itemValue="Yes" itemlabel="Yes"/>
+								<apex:selectOption itemValue="No" itemlabel="No"/>
+							</apex:selectRadio>
+							
+						</apex:column>
+					</apex:pageBlockTable>
 				</apex:column>
-				
-				<apex:column headervalue="Answers">
-				
-					<apex:inputTextarea rendered="{!objlstAnswersWrapper.Question__r.Type__c='Text'}" value="{!objlstAnswersWrapper.Answer__c}"/>
-					
-					<apex:selectList rendered="{!objlstAnswersWrapper.Question__r.Type__c='Picklist'}" value="{!objlstAnswersWrapper.Answer__c}" size="1">
-						<apex:selectOptions value="{!PicklistValues}"/>
-					</apex:selectList>
-					
-					<apex:selectRadio rendered="{!objlstAnswersWrapper.Question__r.Type__c='Radio button'}" value="{!objlstAnswersWrapper.Answer__c}" >
-						<apex:selectOption itemValue="Yes" itemlabel="Yes"/>
-						<apex:selectOption itemValue="No" itemlabel="No"/>
-					</apex:selectRadio>
-					
-				</apex:column>
-				
 			</apex:pageBlockTable>
 			
 			<div id="answered">Total number of questions answered = {!totalNoOfQuestionsAnswered}</div>
@@ -49,10 +51,4 @@
 		</apex:pageBlock>
 	</apex:form>
 	
-	<script>
-		
-		/*alert('{!lstProductName}');
-		alert('{!lstNoOfQuestionsAnswered}');*/
-		
-	</script>
 </apex:page>
