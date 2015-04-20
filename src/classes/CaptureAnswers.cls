@@ -80,7 +80,11 @@ public with sharing class CaptureAnswers {
 												WHERE Id = :oppId
 											];
 		
-		totalNoOfQuestionsAnswered = (Integer)lstOpportunity1[0].Total_number_of_questions_answered__c;
-		totalNoOfQuestionsPending = (Integer)lstOpportunity1[0].Total_number_of_questions_pending__c;
+		
+		if(!lstOpportunity1.isEmpty()) {
+			
+			totalNoOfQuestionsAnswered = (Integer)lstOpportunity1[0].Total_number_of_questions_answered__c;
+			totalNoOfQuestionsPending = (Integer)lstOpportunity1[0].Total_number_of_questions_pending__c;
+		}
 	}
 }
