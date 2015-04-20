@@ -97,12 +97,14 @@ private class CreateAnswerHandlerTest {
         
         ApexPages.StandardController controller;
        	
-       	/*Opportunity objOpportunity =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
+       	Opportunity objOpportunity1 =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
 											FROM Opportunity 
 											WHERE Id = :lstOpportunities[0].id
-										];*/
-										
-       	//List<Opportunity> lstOpportunities1 = ;
+										];
+		
+		System.assertEquals(0, objOpportunity1.Total_number_of_questions_answered__c);
+		System.assertEquals(6, objOpportunity1.Total_number_of_questions_pending__c);
+								
         CaptureAnswers objCaptureAnswers = new CaptureAnswers(controller);
         
         List<SelectOption> lstSelectOption = objCaptureAnswers.getPicklistValues();
@@ -132,6 +134,14 @@ private class CreateAnswerHandlerTest {
         List<Answer__c> lstAnswers3 = [SELECT Opportunity__c, Product__c, Question__c, Question__r.Type__c, Answer__c FROM Answer__c WHERE Opportunity__c = :lstOpportunities[0].id];
         
         System.assertEquals('Text type', lstAnswers3[0].Answer__c);
+        
+        Opportunity objOpportunity2 =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
+											FROM Opportunity 
+											WHERE Id = :lstOpportunities[0].id
+										];
+										
+        System.assertEquals(6, objOpportunity2.Total_number_of_questions_answered__c);
+		System.assertEquals(0, objOpportunity2.Total_number_of_questions_pending__c);
         
         Test.stopTest();
     }

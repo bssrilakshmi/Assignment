@@ -2,14 +2,7 @@ public with sharing class CaptureAnswers {
 	
 	public String oppId;
 	public List<Product2> lstProduct2AndAnswers {get; set;}
-	public List<Product_Group__c> lstProductGroups {get;set;} 
-	public List<String> lstProductName {get; set;}
-	public List<Integer> lstNoOfQuestionsAnswered {get; set;}
-	public Map<Id, Map<String, Question__c>> mapProductGroups {get;set;} 
-	public Map<String, String> mapQuestionsByProduct {get;set;} 
 	public Set<Id> setProduct2Ids = new Set<Id>();
-	public Integer numberOfAnswerRecords;
-	public List<AggregateResult> lstCount {get; set;}
 	public Integer totalNoOfQuestionsAnswered {get; set;}
 	public Integer totalNoOfQuestionsPending {get; set;}
 	public List<Answer__c> lstAnswer = new List<Answer__c>();
@@ -82,18 +75,12 @@ public with sharing class CaptureAnswers {
 	//Get the no. of questions answered and unanswered for the opportunity.
 	public void getNoOfQuestions() {
 		
-		//Opportunity objOpportunity = new Opportunity();
-		 //= 
 		List<Opportunity> lstOpportunity1 =	[	SELECT Total_number_of_questions_answered__c, Total_number_of_questions_pending__c 
 												FROM Opportunity 
 												WHERE Id = :oppId
 											];
 		
-		if(!lstOpportunity1.isEmpty()) {
-			
-			totalNoOfQuestionsAnswered = (Integer)lstOpportunity1[0].Total_number_of_questions_answered__c;
-			totalNoOfQuestionsPending = (Integer)lstOpportunity1[0].Total_number_of_questions_pending__c;
-		}
-		
+		totalNoOfQuestionsAnswered = (Integer)lstOpportunity1[0].Total_number_of_questions_answered__c;
+		totalNoOfQuestionsPending = (Integer)lstOpportunity1[0].Total_number_of_questions_pending__c;
 	}
 }

@@ -1,5 +1,4 @@
 <apex:page standardController="Opportunity" extensions="CaptureAnswers" showHeader="false" sidebar="false">
-	<apex:includeScript value="{!URLFOR($Resource.jQuery, 'jquery-1.11.1.min.js')}"/>
 	<style>
 		#answered, #pending , #question { 
 			
@@ -14,7 +13,7 @@
 			<apex:pageBlockTable value="{!lstProduct2AndAnswers}" var="objlstAnswersWrapper" id="thePageBlockTable">
 				
 				<apex:column headervalue="Product" value="{!objlstAnswersWrapper.Name}" style="font-weight: bold;"/>
-				<apex:column>
+				<apex:column >
 					<apex:pageBlockTable value="{!objlstAnswersWrapper.Answers__r}" var="objlstAnswers" >
 						<apex:column headervalue="Questions" >
 							<apex:outputText style="font-weight: bold;" value="{!objlstAnswers.Question__r.Question__c}"/>
