@@ -5,7 +5,7 @@ public with sharing class CaptureAnswers {
 	public Set<Id> setProduct2Ids = new Set<Id>();
 	public Integer totalNoOfQuestionsAnswered {get; set;}
 	public Integer totalNoOfQuestionsPending {get; set;}
-	public List<Answer__c> lstAnswer = new List<Answer__c>();
+	public List<Answer__c> lstAnswer; 
 	
 	public CaptureAnswers(ApexPages.StandardController controller) {
 		
@@ -32,7 +32,8 @@ public with sharing class CaptureAnswers {
 		lstProduct2AndAnswers = [	SELECT Name, 
 									(	SELECT Question__c, Question__r.Question__c, Question__r.Type__c, Question__r.Picklist_Value__c, Product__c, Product__r.Name, Opportunity__c, Answer__c 
 										FROM Answers__r 
-										WHERE Opportunity__c = :oppId ORDER BY Question__r.Question__c
+										WHERE Opportunity__c = :oppId 
+										ORDER BY Question__r.Question__c
 									) 
 									FROM Product2 
 									WHERE Id 
@@ -44,7 +45,8 @@ public with sharing class CaptureAnswers {
 	public List<SelectOption> getPicklistValues() {
 		
 		List<SelectOption> lstSelectOption = new List<SelectOption>();
-        
+        lstSelectOption.add(new SelectOption('','--None--'));
+		
 		Schema.DescribeFieldResult fieldResult = Question__c.Picklist_Value__c.getDescribe();
 		List<Schema.PicklistEntry> lstPicklist = fieldResult.getPicklistValues();
         
@@ -58,6 +60,8 @@ public with sharing class CaptureAnswers {
 	
 	//Save the answer records on click of save button.
 	public void btnSave() {
+		
+		lstAnswer = new List<Answer__c>();
 		
 		for (Product2 objProduct : lstProduct2AndAnswers) {
 			

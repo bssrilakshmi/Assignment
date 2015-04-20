@@ -117,7 +117,7 @@ private class CreateAnswerHandlerTest {
         	
         	} else if(objAns.Question__r.Type__c == 'Picklist') {
         		
-        		objAns.Answer__c = lstSelectOption[0].getValue();
+        		objAns.Answer__c = lstSelectOption[1].getValue();
         	
         	} else if(objAns.Question__r.Type__c == 'Radio button') {
         		
